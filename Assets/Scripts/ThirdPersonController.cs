@@ -6,6 +6,7 @@ using UnityEngine;
 public class ThirdPersonController : MonoBehaviour
 {
     public static ThirdPersonController Instance;
+    private MouseLook MooseLook;
 
     [Header("Mouvements")]
     [SerializeField]
@@ -14,6 +15,8 @@ public class ThirdPersonController : MonoBehaviour
     private float maxWalkingSpeed = 4.0f;
     [SerializeField]
     private float maxRunningSpeed = 8.0f;
+    [SerializeField]
+    private float maxCrouchingSpeed = 2.0f;
     [SerializeField]
     private float jumpVelocity = 200f;
     [SerializeField]
@@ -39,11 +42,16 @@ public class ThirdPersonController : MonoBehaviour
             state = value;
         }
     }
-
+    
     private Vector3 movement;
+    private float cap;
+    private Vector3 groundSpeed;
+    private Vector3 crouchSpeed;
+    
     private float groundDeaccelerationDampX;
     private float groundDeaccelerationDampY;
-    private float groundDeaccelerationTime = 0.05f;
+    private float groundDeaccelerationTime = 0.1f;
+    private float walkAndRunTransitionTime = 0.2f;
     private Rigidbody m_rigidbody;
 
     private void Awake()
@@ -54,6 +62,8 @@ public class ThirdPersonController : MonoBehaviour
 
     void Start()
     {
+        MooseLook = MouseLook.Instance;
+        cap = maxWalkingSpeed;
     }
 
     void Update()
@@ -67,7 +77,7 @@ public class ThirdPersonController : MonoBehaviour
         movement = new Vector3(m_rigidbody.velocity.x, 0f, m_rigidbody.velocity.z);
         Vector3 m = new Vector3(h, 0f, v);
 
-        if (state == State.Grounded || state == State.Running)
+        if (state == State.Grounded || state == State.Running || state == State.Crouched)
         {
             Move(m);
             CapSpeed();
@@ -78,6 +88,9 @@ public class ThirdPersonController : MonoBehaviour
         {
             Jump();
         }
+
+        groundSpeed = m_rigidbody.velocity;
+        groundSpeed.y = 0;
     }
 
     private void Move(Vector3 move)
@@ -86,7 +99,6 @@ public class ThirdPersonController : MonoBehaviour
         {
             m_rigidbody.AddRelativeForce(move * accelerationSpeed * Time.deltaTime);
         }
-        // Déaccélération
         else if (Input.GetAxisRaw("Vertical") == 0f && Input.GetAxisRaw("Horizontal") == 0f)
         {
             movement.x = Mathf.SmoothDamp(movement.x, 0f, ref groundDeaccelerationDampX, groundDeaccelerationTime);
@@ -104,8 +116,16 @@ public class ThirdPersonController : MonoBehaviour
     private void CapSpeed()
     {
         Vector2 rigidbody_movement = new Vector2(m_rigidbody.velocity.x, m_rigidbody.velocity.z);
-        float cap = (state == State.Grounded)
-                    ? maxWalkingSpeed : maxRunningSpeed;
+
+        if (state == State.Grounded)
+            cap = Mathf.SmoothDamp(cap, maxWalkingSpeed, ref groundDeaccelerationDampY, walkAndRunTransitionTime);
+
+        if (state == State.Running)
+            cap = Mathf.SmoothDamp(cap, maxRunningSpeed, ref groundDeaccelerationDampY, walkAndRunTransitionTime);
+
+        if (state == State.Crouched)
+            cap = Mathf.SmoothDamp(cap, maxCrouchingSpeed, ref groundDeaccelerationDampY, walkAndRunTransitionTime);
+
         if (rigidbody_movement.magnitude > cap)
         {
             rigidbody_movement.Normalize();
@@ -113,12 +133,32 @@ public class ThirdPersonController : MonoBehaviour
             m_rigidbody.velocity = new Vector3(rigidbody_movement.x, m_rigidbody.velocity.y, rigidbody_movement.y);
         }
     }
-}
 
+    public float GetSpeed()
+    {
+        return groundSpeed.magnitude;
+    }
+
+    public float GetDirection()
+    {
+        return Input.GetAxis("Horizontal"); // MooseLook.transform.rotation.eulerAngles.x; // Input.GetAxis("Horizontal");
+    }
+    
+    public bool IsJumping()
+    {
+        return state == State.Jumped;
+    }
+
+    public bool IsCrouching()
+    {
+        return state == State.Crouched;
+    }
+}
 
 public enum State
 {
     Grounded,
     Running,
     Jumped,
+    Crouched
 };

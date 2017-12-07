@@ -2,6 +2,9 @@
 
 public class MouseLook : MonoBehaviour
 {
+    public static MouseLook Instance;
+    private ThirdPersonController controller;
+
     private float x = 0.0f;
     private float y = 0.0f;
 
@@ -11,12 +14,18 @@ public class MouseLook : MonoBehaviour
     private float MaxViewDistance = 15f;
     private float MinViewDistance = 1f;
     private float desireDistance;
-
-    [SerializeField]    
+    
     private Transform CameraTarget;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
+        CameraTarget = transform.parent;
+        controller = ThirdPersonController.Instance;
         Vector3 Angles = transform.eulerAngles;
         x = Angles.x;
         y = Angles.y;
@@ -34,11 +43,13 @@ public class MouseLook : MonoBehaviour
         desireDistance = Mathf.Clamp(desireDistance, MinViewDistance, MaxViewDistance);
         Vector3 position = CameraTarget.position - (rotation * Vector3.forward * desireDistance);
 
-        position = CameraTarget.position - (rotation * Vector3.forward * desireDistance + new Vector3(0, -1.0f, 0));
+        position = CameraTarget.position - (rotation * Vector3.forward * desireDistance + new Vector3(0, -3.0f, 0));
 
         transform.rotation = rotation;
         transform.position = position;
-        CameraTarget.rotation = Quaternion.Lerp(CameraTarget.rotation, Quaternion.Euler(0.0f, rotation.eulerAngles.y, 0.0f), Time.time * mouseXSpeedMod);
+
+        if(controller.GetSpeed() > 0.0f)
+            CameraTarget.rotation = Quaternion.Lerp(CameraTarget.rotation, Quaternion.Euler(0.0f, rotation.eulerAngles.y, 0.0f), Time.time * 0.08f);
     }
 
     private static float ClampAngle(float angle, float min, float max)

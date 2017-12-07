@@ -279,6 +279,7 @@ GameObject:
   - component: {fileID: 54310792297725838}
   - component: {fileID: 114332799765438978}
   - component: {fileID: 114039173873962258}
+  - component: {fileID: 114683299402955136}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -2455,12 +2456,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7efbfb52e35e6a9499fe85258d0b3cf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  accelerationSpeed: 50000
+  accelerationSpeed: 100000
   maxWalkingSpeed: 4
   maxRunningSpeed: 8
   jumpVelocity: 10000
   maxGroundSlope: 60
   state: 0
+--- !u!114 &114683299402955136
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1125842105107648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 254e694882182a34ab90de1ee21913e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!124 &124263390891907084
 Behaviour:
   m_ObjectHideFlags: 1
