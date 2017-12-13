@@ -6,15 +6,12 @@ using UnityEngine;
 using System;
 
 [RequireComponent(typeof(Animator))]
-
-//Name of class must be name of file as well
-
-public class FootIK : MonoBehaviour
+public class FootInverseKinematic : MonoBehaviour
 {
     [SerializeField]
     protected Animator animator;
     [SerializeField]
-    private CapsuleCollider collider;
+    private CapsuleCollider m_collider;
     [SerializeField]
     private bool isKinematic = false;
     [SerializeField]
@@ -45,8 +42,8 @@ public class FootIK : MonoBehaviour
 
     void Start()
     {
-        defCenter = collider.center;
-        defHeight = collider.height;
+        defCenter = m_collider.center;
+        defHeight = m_collider.height;
     }
 
     void Update()
@@ -58,8 +55,8 @@ public class FootIK : MonoBehaviour
         }
         else
         {
-            collider.center = new Vector3(0, Mathf.Lerp(collider.center.y, defCenter.y, Time.deltaTime * smooth), 0);
-            collider.height = Mathf.Lerp(collider.height, defHeight, Time.deltaTime * smooth);
+            m_collider.center = new Vector3(0, Mathf.Lerp(m_collider.center.y, defCenter.y, Time.deltaTime * smooth), 0);
+            m_collider.height = Mathf.Lerp(m_collider.height, defHeight, Time.deltaTime * smooth);
         }
     }
 
@@ -67,7 +64,7 @@ public class FootIK : MonoBehaviour
     {
         if (isKinematic)
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Idle") && collider.attachedRigidbody.velocity.magnitude < 0.1f)
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.Idle") && m_collider.attachedRigidbody.velocity.magnitude < 0.1f)
             {
                 animator.SetIKPositionWeight(AvatarIKGoal.LeftFoot, transformWeigth);
                 animator.SetIKRotationWeight(AvatarIKGoal.LeftFoot, transformWeigth);
@@ -108,7 +105,7 @@ public class FootIK : MonoBehaviour
         if (dif < 0)
             dif *= -1;
 
-        collider.center = new Vector3(0, Mathf.Lerp(collider.center.y, defCenter.y + dif, Time.deltaTime), 0);
-        collider.height = Mathf.Lerp(collider.height, defHeight - (dif / 2), Time.deltaTime);
+        m_collider.center = new Vector3(0, Mathf.Lerp(m_collider.center.y, defCenter.y + dif, Time.deltaTime), 0);
+        m_collider.height = Mathf.Lerp(m_collider.height, defHeight - (dif / 2), Time.deltaTime);
     }
 }

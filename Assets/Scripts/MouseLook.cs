@@ -48,8 +48,8 @@ public class MouseLook : MonoBehaviour
         transform.rotation = rotation;
         transform.position = position;
 
-        if(controller.GetSpeed() > 0.0f)
-            CameraTarget.rotation = Quaternion.Lerp(CameraTarget.rotation, Quaternion.Euler(0.0f, rotation.eulerAngles.y, 0.0f), Time.time * 0.08f);
+        if(controller.GetSpeed() > 0.1f)
+            CameraTarget.rotation = Quaternion.Lerp(CameraTarget.rotation, Quaternion.Euler(0.0f, rotation.eulerAngles.y, 0.0f), Time.time * 0.01f);
     }
 
     private static float ClampAngle(float angle, float min, float max)
