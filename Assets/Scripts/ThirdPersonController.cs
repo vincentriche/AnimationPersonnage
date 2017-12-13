@@ -6,7 +6,6 @@ using UnityEngine;
 public class ThirdPersonController : MonoBehaviour
 {
     public static ThirdPersonController Instance;
-    private MouseLook MooseLook;
 
     [Header("Mouvements")]
     [SerializeField]
@@ -62,7 +61,6 @@ public class ThirdPersonController : MonoBehaviour
 
     void Start()
     {
-        MooseLook = MouseLook.Instance;
         cap = maxWalkingSpeed;
     }
 
