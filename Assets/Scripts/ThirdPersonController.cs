@@ -41,17 +41,35 @@ public class ThirdPersonController : MonoBehaviour
             state = value;
         }
     }
-    
+
+    [SerializeField]
+    private GameObject spine;
+    [SerializeField]
+    private GameObject head;
+    [SerializeField]
+    private GameObject hat;
+    private Vector3 hatPosition;
+    private Quaternion hatRotation;
+    [SerializeField]
+    private GameObject glasses;
+    private Vector3 glassesPosition;
+    private Quaternion glassesRotation;
+
     private Vector3 movement;
     private float cap;
     private Vector3 groundSpeed;
     private Vector3 crouchSpeed;
-    
+
     private float groundDeaccelerationDampX;
     private float groundDeaccelerationDampY;
     private float groundDeaccelerationTime = 0.1f;
     private float walkAndRunTransitionTime = 0.2f;
     private Rigidbody m_rigidbody;
+
+    bool freeze = false;
+    bool isRagdolled = false;
+
+    private Animator animator;
 
     private void Awake()
     {
@@ -62,33 +80,53 @@ public class ThirdPersonController : MonoBehaviour
     void Start()
     {
         cap = maxWalkingSpeed;
+        hatPosition = hat.transform.localPosition;
+        hatRotation = hat.transform.localRotation;
+        glassesPosition = glasses.transform.localPosition;
+        glassesRotation = glasses.transform.localRotation;
+
+        animator = GetComponent<Animator>();
     }
 
     void Update()
     {
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("Standing Up"))
+            freeze = true;
+        else
+            freeze = false;
+
+        AnimatorParameters();
+
+        if (state == State.Ragdolled)
+            EnableRagdoll(true);
+        else
+            EnableRagdoll(false);
     }
 
     private void FixedUpdate()
     {
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        movement = new Vector3(m_rigidbody.velocity.x, 0f, m_rigidbody.velocity.z);
-        Vector3 m = new Vector3(h, 0f, v);
-
-        if (state == State.Grounded || state == State.Running || state == State.Crouched)
+        if (freeze == false)
         {
-            Move(m);
-            CapSpeed();
-        }
+            float h = Input.GetAxis("Horizontal");
+            float v = Input.GetAxis("Vertical");
+            movement = new Vector3(m_rigidbody.velocity.x, 0f, m_rigidbody.velocity.z);
+            Vector3 m = new Vector3(h, 0f, v);
 
-        if (Input.GetKeyDown(KeyCode.Space)
-            && (state == State.Grounded || state == State.Running))
-        {
-            Jump();
-        }
+            if (state == State.Grounded || state == State.Running || state == State.Crouched)
+            {
+                Move(m);
+                CapSpeed();
+            }
 
-        groundSpeed = m_rigidbody.velocity;
-        groundSpeed.y = 0;
+            if (Input.GetKeyDown(KeyCode.Space)
+                && (state == State.Grounded || state == State.Running))
+            {
+                Jump();
+            }
+
+            groundSpeed = m_rigidbody.velocity;
+            groundSpeed.y = 0;
+        }
     }
 
     private void Move(Vector3 move)
@@ -141,7 +179,74 @@ public class ThirdPersonController : MonoBehaviour
     {
         return Input.GetAxis("Horizontal"); // MooseLook.transform.rotation.eulerAngles.x; // Input.GetAxis("Horizontal");
     }
-    
+
+    private void AnimatorParameters()
+    {
+        animator.SetFloat("speed", GetSpeed());
+        animator.SetFloat("direction", GetDirection());
+        animator.SetBool("isJumping", IsJumping());
+        animator.SetBool("isCrouching", IsCrouching());
+    }
+
+    private void EnableRagdoll(bool b)
+    {
+        GetComponent<FootIK>().enabled = !b;
+        GetComponent<CapsuleCollider>().enabled = !b;
+        animator.enabled = !b;
+
+        var rigColliders = GetComponentsInChildren<Collider>();
+        var rigRigidbodies = GetComponentsInChildren<Rigidbody>();
+        foreach (Collider col in rigColliders)
+        {
+            if (col.tag == "Player")
+                col.enabled = !b;
+            else
+                col.enabled = b;
+        }
+
+        Vector3 velocity = m_rigidbody.velocity;
+        foreach (Rigidbody rb in rigRigidbodies)
+        {
+            if (rb.tag == "Player") 
+                rb.isKinematic = b;
+            else
+            {
+                rb.isKinematic = !b;
+                rb.detectCollisions = b;
+                rb.useGravity = b;
+                //rb.velocity = velocity;
+            }
+        }
+
+        if (b == true)
+        {
+            isRagdolled = true;
+            hat.transform.parent = transform;
+            glasses.transform.parent = transform;
+        }
+        else
+        {
+            Vector3 cameraPosition = GetComponentInChildren<Camera>().transform.position;
+            if (isRagdolled == true)
+            {
+                Vector3 position = new Vector3(spine.transform.position.x, transform.position.y, spine.transform.position.z);
+                transform.position = position;
+                GetComponentInChildren<Camera>().transform.position = cameraPosition;
+
+                hat.transform.parent = head.transform;
+                hat.transform.localPosition = hatPosition;
+                hat.transform.localRotation = hatRotation;
+
+                glasses.transform.parent = head.transform;
+                glasses.transform.localPosition = glassesPosition;
+                glasses.transform.localRotation = glassesRotation;
+
+                animator.Play("Standing Up");
+                isRagdolled = false;
+            }
+        }
+    }
+
     public bool IsJumping()
     {
         return state == State.Jumped;
@@ -151,6 +256,11 @@ public class ThirdPersonController : MonoBehaviour
     {
         return state == State.Crouched;
     }
+
+    public bool IsRagdolling()
+    {
+        return isRagdolled;
+    }
 }
 
 public enum State
@@ -158,5 +268,6 @@ public enum State
     Grounded,
     Running,
     Jumped,
-    Crouched
+    Crouched,
+    Ragdolled
 };

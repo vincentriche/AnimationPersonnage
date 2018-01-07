@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-public class MouseLook : MonoBehaviour
+public class MouseOrbiter : MonoBehaviour
 {
-    public static MouseLook Instance;
+    public static MouseOrbiter Instance;
     private ThirdPersonController controller;
 
     private float x = 0.0f;
