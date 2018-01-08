@@ -55,6 +55,9 @@ public class ThirdPersonController : MonoBehaviour
     private Vector3 glassesPosition;
     private Quaternion glassesRotation;
 
+    [SerializeField]
+    public GameObject treePrefab;
+
     private Vector3 movement;
     private float cap;
     private Vector3 groundSpeed;
@@ -68,7 +71,7 @@ public class ThirdPersonController : MonoBehaviour
 
     bool freeze = false;
     bool isRagdolled = false;
-
+    
     private Animator animator;
 
     private void Awake()
@@ -97,6 +100,16 @@ public class ThirdPersonController : MonoBehaviour
 
         AnimatorParameters();
 
+        if (Input.GetKey(KeyCode.C) && (State == State.Grounded || State == State.Running))
+            State = State.Crouched;
+        else if (!Input.GetKey(KeyCode.C) && State == State.Crouched)
+            State = State.Grounded;
+
+        if (Input.GetKey(KeyCode.LeftShift) && State == State.Grounded)
+            State = State.Running;
+        else if (!Input.GetKey(KeyCode.LeftShift) && State == State.Running)
+            State = State.Grounded;
+
 
         if (Input.GetKeyDown(KeyCode.R) && State == State.Ragdolled)
         {
@@ -111,7 +124,22 @@ public class ThirdPersonController : MonoBehaviour
             EnableRagdoll(true);
         }
 
+        // Spawn Tree
+        if (Input.GetKeyDown(KeyCode.F))
+            SpawnTree();
+    }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+
+        if (state == State.Jumped)
+            state = State.Grounded;
+
+        if (collision.collider.gameObject.tag != "Terrain")
+        {
+            State = State.Ragdolled;
+            EnableRagdoll(true);
+        }
     }
 
     private void FixedUpdate()
@@ -241,9 +269,10 @@ public class ThirdPersonController : MonoBehaviour
             Vector3 cameraPosition = GetComponentInChildren<Camera>().transform.position;
             if (isRagdolled == true)
             {
-                Vector3 position = new Vector3(spine.transform.position.x, transform.position.y, spine.transform.position.z);
+                Vector3 position = new Vector3(spine.transform.position.x, 0.04363012f, spine.transform.position.z);
                 transform.position = position;
-                GetComponentInChildren<Camera>().transform.position = cameraPosition;
+
+                GetComponentInChildren<Camera>().transform.position = Vector3.Lerp(GetComponentInChildren<Camera>().transform.position, cameraPosition, 1.0f);
 
                 hat.transform.parent = head.transform;
                 hat.transform.localPosition = hatPosition;
@@ -272,6 +301,14 @@ public class ThirdPersonController : MonoBehaviour
     public bool IsRagdolling()
     {
         return isRagdolled;
+    }
+    
+    public void SpawnTree()
+    {
+        Vector3 cameraForward = GetComponentInChildren<MouseOrbiter>().transform.forward;
+        Vector3 p = transform.position + cameraForward * 15.0f + transform.up * 2.0f;
+        GameObject o = Instantiate(treePrefab, p, Quaternion.identity);
+        o.GetComponent<Rigidbody>().AddForce(-cameraForward * 100000.0f);
     }
 }
 

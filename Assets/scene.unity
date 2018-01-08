@@ -1681,9 +1681,9 @@ GameObject:
   - component: {fileID: 1585999361}
   - component: {fileID: 1585999360}
   - component: {fileID: 1585999359}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Terrain
-  m_TagString: Untagged
+  m_TagString: Terrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -2065,7 +2065,19 @@ Prefab:
       propertyPath: m_RootOrder
       value: 7
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 114039173873962258, guid: a3708a2edfb102c47a02cf55714d7fd6,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114332799765438978, guid: a3708a2edfb102c47a02cf55714d7fd6,
+        type: 2}
+      propertyPath: treePrefab
+      value: 
+      objectReference: {fileID: 1670664959697352, guid: f30c71452d51fa74396b94d0dd36a12d,
+        type: 2}
+    m_RemovedComponents:
+    - {fileID: 114039173873962258, guid: a3708a2edfb102c47a02cf55714d7fd6, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: a3708a2edfb102c47a02cf55714d7fd6, type: 2}
   m_IsPrefabParent: 0
 --- !u!1 &1971081419
