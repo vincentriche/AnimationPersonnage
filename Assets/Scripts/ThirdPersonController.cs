@@ -97,10 +97,21 @@ public class ThirdPersonController : MonoBehaviour
 
         AnimatorParameters();
 
-        if (state == State.Ragdolled)
-            EnableRagdoll(true);
-        else
+
+        if (Input.GetKeyDown(KeyCode.R) && State == State.Ragdolled)
+        {
+            State = State.Grounded;
             EnableRagdoll(false);
+            return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && (State == State.Grounded || State == State.Running || State == State.Jumped || State == State.Crouched))
+        {
+            State = State.Ragdolled;
+            EnableRagdoll(true);
+        }
+
+
     }
 
     private void FixedUpdate()
@@ -207,14 +218,15 @@ public class ThirdPersonController : MonoBehaviour
         Vector3 velocity = m_rigidbody.velocity;
         foreach (Rigidbody rb in rigRigidbodies)
         {
-            if (rb.tag == "Player") 
+            if (rb.tag == "Player")
                 rb.isKinematic = b;
             else
             {
                 rb.isKinematic = !b;
                 rb.detectCollisions = b;
                 rb.useGravity = b;
-                //rb.velocity = velocity;
+                rb.velocity = velocity;
+                //rb.AddForce(new Vector3(10.0f, 0.0f, 10.0f));
             }
         }
 
