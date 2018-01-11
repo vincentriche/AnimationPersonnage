@@ -14,7 +14,7 @@ public class MouseOrbiter : MonoBehaviour
     private float MaxViewDistance = 15f;
     private float MinViewDistance = 1f;
     private float desireDistance;
-    
+
     private Transform CameraTarget;
 
     private void Awake()
@@ -39,17 +39,17 @@ public class MouseOrbiter : MonoBehaviour
         y = ClampAngle(y, -15, 45);
         Quaternion rotation = Quaternion.Euler(y, x, 0);
 
-        desireDistance -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 15f * Mathf.Abs(desireDistance);
+        desireDistance -= Input.GetAxis("Mouse ScrollWheel") * Time.deltaTime * 10f * Mathf.Abs(desireDistance);
         desireDistance = Mathf.Clamp(desireDistance, MinViewDistance, MaxViewDistance);
         Vector3 position = CameraTarget.position - (rotation * Vector3.forward * desireDistance);
 
         position = CameraTarget.position - (rotation * Vector3.forward * desireDistance + new Vector3(0, -3.0f, 0));
 
-        transform.rotation = rotation;
         transform.position = position;
+        transform.rotation = rotation;
 
-        if(controller.GetSpeed() > 0.1f)
-            CameraTarget.rotation = Quaternion.Lerp(CameraTarget.rotation, Quaternion.Euler(0.0f, rotation.eulerAngles.y, 0.0f), Time.time * 0.01f);
+        if (controller.GetSpeed() > 0.1f)
+            CameraTarget.rotation = Quaternion.Lerp(CameraTarget.rotation, Quaternion.Euler(0.0f, rotation.eulerAngles.y, 0.0f), Time.time * 0.02f);
     }
 
     private static float ClampAngle(float angle, float min, float max)

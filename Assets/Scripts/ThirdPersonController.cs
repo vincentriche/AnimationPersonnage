@@ -71,7 +71,7 @@ public class ThirdPersonController : MonoBehaviour
 
     bool freeze = false;
     bool isRagdolled = false;
-    
+
     private Animator animator;
 
     private void Awake()
@@ -113,15 +113,15 @@ public class ThirdPersonController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R) && State == State.Ragdolled)
         {
-            State = State.Grounded;
             EnableRagdoll(false);
+            State = State.Grounded;
             return;
         }
 
         if (Input.GetKeyDown(KeyCode.R) && (State == State.Grounded || State == State.Running || State == State.Jumped || State == State.Crouched))
         {
-            State = State.Ragdolled;
             EnableRagdoll(true);
+            State = State.Ragdolled;
         }
 
         // Spawn Tree
@@ -254,7 +254,6 @@ public class ThirdPersonController : MonoBehaviour
                 rb.detectCollisions = b;
                 rb.useGravity = b;
                 rb.velocity = velocity;
-                //rb.AddForce(new Vector3(10.0f, 0.0f, 10.0f));
             }
         }
 
@@ -266,13 +265,10 @@ public class ThirdPersonController : MonoBehaviour
         }
         else
         {
-            Vector3 cameraPosition = GetComponentInChildren<Camera>().transform.position;
             if (isRagdolled == true)
             {
-                Vector3 position = new Vector3(spine.transform.position.x, 0.04363012f, spine.transform.position.z);
-                transform.position = position;
-
-                GetComponentInChildren<Camera>().transform.position = Vector3.Lerp(GetComponentInChildren<Camera>().transform.position, cameraPosition, 1.0f);
+                transform.position = spine.transform.position;
+                transform.position = new Vector3(transform.position.x, 0.04363012f, transform.position.z);
 
                 hat.transform.parent = head.transform;
                 hat.transform.localPosition = hatPosition;
@@ -302,7 +298,7 @@ public class ThirdPersonController : MonoBehaviour
     {
         return isRagdolled;
     }
-    
+
     public void SpawnTree()
     {
         Vector3 cameraForward = GetComponentInChildren<MouseOrbiter>().transform.forward;
