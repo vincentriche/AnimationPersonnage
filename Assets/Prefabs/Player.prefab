@@ -1778,7 +1778,7 @@ GameObject:
   - component: {fileID: 4977099403852624}
   m_Layer: 0
   m_Name: Armature
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3121,8 +3121,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1282024744290576}
-  m_LocalRotation: {x: 0, y: 0, z: 8.881784e-16, w: 1}
-  m_LocalPosition: {x: 4.1633363e-16, y: 2.842171e-16, z: -5.9603467e-10}
+  m_LocalRotation: {x: -0, y: -0, z: 8.027617e-17, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4352575850611186}
@@ -5446,7 +5446,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: 0.009684429, y: -0.65102947, z: 0.002261181}
+  m_ConnectedAnchor: {x: 0.009684429, y: -0.65102947, z: 0.00226118}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
@@ -5534,7 +5534,7 @@ CharacterJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -0.009699703, y: -0.65102893, z: 0.002264338}
+  m_ConnectedAnchor: {x: -0.009699703, y: -0.65102893, z: 0.0022643371}
   serializedVersion: 2
   m_SwingAxis: {x: 0, y: 0, z: 1}
   m_TwistLimitSpring:
