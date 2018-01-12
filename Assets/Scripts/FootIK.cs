@@ -25,6 +25,9 @@ public class FootIK : MonoBehaviour
     [SerializeField]
     private Vector3 footRoffset;
 
+    [SerializeField]
+    private GameObject lookObject;
+
     private Vector3 footPosL;
     private Vector3 footPosR;
 
@@ -69,6 +72,12 @@ public class FootIK : MonoBehaviour
                     animator.SetIKRotationWeight(AvatarIKGoal.RightFoot, transformWeigth);
                     footPosR = hit.point;
                 }
+            }
+
+            if(lookObject != null)
+            {
+                animator.SetLookAtWeight(1);
+                animator.SetLookAtPosition(lookObject.transform.position);
             }
         }
     }

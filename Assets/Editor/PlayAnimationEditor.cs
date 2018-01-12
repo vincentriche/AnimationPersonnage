@@ -73,8 +73,7 @@ public class PlayAnimationEditor : EditorWindow
             }
         }
     }
-
-
+    
 
     // This function enables the editor to handle an event in the scene view.
     // We need to redraw the curve & points when the user is interacting with the SceneView
