@@ -5,10 +5,7 @@ using System.Collections.Generic;
 public class EditAnimationEditor : EditorWindow
 {
     private AnimationClip originalClip;
-
-    private int N = 0;
-    private bool multiresolutionEnable = false;
-
+    
     // The new item in the menu
     [MenuItem("Window/Edit Animation", false, 2000)]
     public static void DoWindow()
