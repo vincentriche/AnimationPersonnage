@@ -47,6 +47,6 @@ public class EditAnimationEditor : EditorWindow
             }
             AnimationUtility.SetEditorCurve(clip, binding, curve);
         }
-        AssetDatabase.CreateAsset(clip, "Assets/Animations/1. Gaussian.anim");
+        AssetDatabase.CreateAsset(clip, "Assets/Animations/Gaussian.anim");
     }    
 }
